@@ -16,7 +16,6 @@ TE = 0.200; % Specify the echo time
 T1 = 1000; % s, Making it very long, essentially neglecting T1 relaxation
 T2 = 0.300; % 20 ms
 
-
 % Define the B1 function.
 % To keep the refocused magnetization along Mx, I'll use a -90y then a 180x
 B1maxExc = flipAngleExc/180 * 500 * (0.001/Tp) * 2 * pi;
@@ -41,12 +40,6 @@ end
 
 % Convert to complex 
 B1 = B1x + 1j.*B1y;
-
-% Define the ADC trace
-% Acquire at TE + Tp/2 ( the echo timing starts at the center of the
-% excitation pulse)
-adc = timeax.*0;
-adc(timeax>(Tp/2 + TE/2)) = 1; % Set it to 0 when off (during RF) and 1 after
 
 % Consider a set of Ni isochromats, each with a discrete off-resonance
 % value. The offsets will be normally distributed around zero, with a stdev
@@ -97,19 +90,13 @@ Mzt = sum(Mzi,2) ./ Ni;
 % So here's the pulse sequence
 figure(1)
 clf
-subplot(4,1,1)
+subplot(3,1,1)
 plot(timeax, abs(B1), 'b');
 xlabel('time (s)');
 ylabel('gamma-B1 (Hz)')
 
-subplot(4,1,2)
-plot(timeax, adc);
-xlabel('time (s)');
-ylabel('ADC');
-set(gca, 'ylim', [-.1 1.1]);
-
 % Transferse Magnetization, magnitude
-subplot(4,1,3)
+subplot(3,1,2)
 hold on
 % Plot the signal from each of the isochromats in blue
 for idx=1:Ni
@@ -123,7 +110,7 @@ xlabel('time (s)');
 ylabel('abs{Mxy(t)}');
 
 % Transferse Magnetization, phase
-subplot(4,1,4)
+subplot(3,1,3)
 hold on
 % Plot the signal from each of the isochromats in blue
 for idx=1:Ni
